@@ -17,9 +17,6 @@ export default function PriceChart({ data }: PriceChartProps) {
     return `$${value.toFixed(0)}`;
   };
 
-  const historicalData = data.filter((d) => d.isHistorical);
-  const projectedData = data.filter((d) => !d.isHistorical);
-
   const combinedData = data.map((point) => ({
     timestamp: point.timestamp,
     date: format(new Date(point.timestamp), 'MMM dd, yyyy'),
@@ -70,17 +67,17 @@ export default function PriceChart({ data }: PriceChartProps) {
               labelFormatter={(label: number) => format(new Date(label), 'MMM dd, yyyy')}
               cursor={{ stroke: '#000000', strokeWidth: 1 }}
             />
-            <Legend 
+            <Legend
               wrapperStyle={{ fontFamily: 'var(--font-ibm-plex-mono)', fontSize: '11px', paddingTop: '20px' }}
             />
             <ReferenceLine
               x={Date.now()}
               stroke="#000000"
               strokeDasharray="3 3"
-              label={{ 
-                value: 'TODAY', 
-                position: 'top', 
-                fill: '#000000', 
+              label={{
+                value: 'TODAY',
+                position: 'top',
+                fill: '#000000',
                 fontSize: 10,
                 fontFamily: 'var(--font-ibm-plex-mono)'
               }}
