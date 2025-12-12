@@ -79,25 +79,25 @@ export default function DataTable({ data }: DataTableProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-          Sales Data ({filteredData.length} records)
+    <div className="mb-12 border border-default p-6 bg-white dark:bg-black">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 border-b border-default pb-4">
+        <h3 className="font-mono text-xs uppercase tracking-widest text-gray-500">
+          Data_Log // {filteredData.length} RECORDS
         </h3>
 
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-gray-600 dark:text-gray-300">Filter:</label>
+        <div className="flex items-center gap-2 font-mono text-xs">
+          <label className="text-gray-500">FILTER_SECTION:</label>
           <select
             value={filterSection}
             onChange={(e) => {
               setFilterSection(e.target.value);
               setCurrentPage(1);
             }}
-            className="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+            className="px-2 py-1 border border-gray-300 bg-white dark:bg-black dark:border-gray-700 text-black dark:text-white outline-none focus:border-black dark:focus:border-white transition-colors"
           >
             {sections.map((section) => (
               <option key={section} value={section}>
-                {section === 'all' ? 'All Sections' : section}
+                {section === 'all' ? 'ALL' : section}
               </option>
             ))}
           </select>
@@ -107,120 +107,104 @@ export default function DataTable({ data }: DataTableProps) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 dark:border-gray-700">
-              <th className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300">
-                Event ID
+            <tr className="border-b-2 border-black dark:border-white text-left font-mono text-xs uppercase tracking-wider">
+              <th className="py-3 px-4 font-bold text-black dark:text-white">
+                Event_ID
               </th>
               <th
-                className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="py-3 px-4 font-bold text-black dark:text-white cursor-pointer hover:underline decoration-1 underline-offset-4"
                 onClick={() => handleSort('timestamp')}
               >
-                <div className="flex items-center gap-2">
-                  Timestamp
-                  {sortField === 'timestamp' && (
-                    <span>{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                  )}
-                </div>
+                Timestamp {sortField === 'timestamp' && (sortDirection === 'asc' ? '↑' : '↓')}
               </th>
               <th
-                className="text-right py-3 px-4 font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="py-3 px-4 text-right font-bold text-black dark:text-white cursor-pointer hover:underline decoration-1 underline-offset-4"
                 onClick={() => handleSort('price')}
               >
-                <div className="flex items-center justify-end gap-2">
-                  Price
-                  {sortField === 'price' && (
-                    <span>{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                  )}
-                </div>
+                Price {sortField === 'price' && (sortDirection === 'asc' ? '↑' : '↓')}
               </th>
               <th
-                className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="py-3 px-4 font-bold text-black dark:text-white cursor-pointer hover:underline decoration-1 underline-offset-4"
                 onClick={() => handleSort('seat')}
               >
-                <div className="flex items-center gap-2">
-                  Seat
-                  {sortField === 'seat' && (
-                    <span>{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                  )}
-                </div>
+                Seat {sortField === 'seat' && (sortDirection === 'asc' ? '↑' : '↓')}
               </th>
               <th
-                className="text-left py-3 px-4 font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="py-3 px-4 font-bold text-black dark:text-white cursor-pointer hover:underline decoration-1 underline-offset-4"
                 onClick={() => handleSort('section')}
               >
-                <div className="flex items-center gap-2">
-                  Section
-                  {sortField === 'section' && (
-                    <span>{sortDirection === 'asc' ? '↑' : '↓'}</span>
-                  )}
-                </div>
+                Section {sortField === 'section' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
+              <th className="py-3 px-4 font-bold text-black dark:text-white text-right">
+                Type
               </th>
             </tr>
           </thead>
-          <tbody>
-            {paginatedData.map((sale, index) => (
+          <tbody className="font-mono text-xs">
+            {paginatedData.map((sale, index) => {
+               const historical = isHistorical(sale.timestamp);
+               return (
               <tr
                 key={`${sale.event_id}-${sale.seat}-${index}`}
-                className={`border-b border-gray-100 dark:border-gray-700 ${
-                  isHistorical(sale.timestamp)
-                    ? 'bg-blue-50/50 dark:bg-blue-900/10'
-                    : 'bg-purple-50/50 dark:bg-purple-900/10'
-                }`}
+                className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors"
               >
-                <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
+                <td className="py-2 px-4 text-gray-500">
                   {sale.event_id}
                 </td>
-                <td className="py-3 px-4 text-gray-600 dark:text-gray-300">
+                <td className="py-2 px-4 text-black dark:text-white">
                   {formatDate(sale.timestamp)}
                 </td>
-                <td className="py-3 px-4 text-right font-medium text-gray-900 dark:text-gray-100">
+                <td className="py-2 px-4 text-right font-medium text-black dark:text-white">
                   {formatPrice(sale.price)}
                 </td>
-                <td className="py-3 px-4 text-gray-900 dark:text-gray-100 font-mono">
+                <td className="py-2 px-4 text-gray-600 dark:text-gray-400">
                   {sale.seat}
                 </td>
-                <td className="py-3 px-4 text-gray-900 dark:text-gray-100">
+                <td className="py-2 px-4 text-gray-600 dark:text-gray-400">
                   {sale.section}
                 </td>
+                 <td className="py-2 px-4 text-right">
+                  <span className={`inline-block w-2 h-2 rounded-none ${historical ? 'bg-ocean-500' : 'bg-goldenrod-500'}`}></span>
+                </td>
               </tr>
-            ))}
+            )})}
           </tbody>
         </table>
       </div>
 
       {totalPages > 1 && (
-        <div className="mt-6 flex justify-between items-center">
-          <div className="text-sm text-gray-600 dark:text-gray-300">
-            Page {currentPage} of {totalPages}
+        <div className="mt-6 flex justify-between items-center font-mono text-xs">
+          <div className="text-gray-500">
+            PAGE {currentPage} / {totalPages}
           </div>
 
           <div className="flex gap-2">
             <button
               onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-current"
             >
-              Previous
+              PREV
             </button>
             <button
               onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-current"
             >
-              Next
+              NEXT
             </button>
           </div>
         </div>
       )}
 
-      <div className="mt-4 flex items-center gap-6 text-xs">
+      <div className="mt-4 flex items-center justify-end gap-6 text-[10px] uppercase font-mono tracking-widest text-gray-400">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800"></div>
-          <span className="text-gray-600 dark:text-gray-300">Historical</span>
+          <div className="w-2 h-2 bg-ocean-500"></div>
+          <span>Historical</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-purple-50 dark:bg-purple-900/10 border border-purple-200 dark:border-purple-800"></div>
-          <span className="text-gray-600 dark:text-gray-300">Projected</span>
+          <div className="w-2 h-2 bg-goldenrod-500"></div>
+          <span>Projected</span>
         </div>
       </div>
     </div>

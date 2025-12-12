@@ -64,24 +64,25 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-8 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading...</p>
+      <div className="min-h-screen bg-gray-200 p-8 flex items-center justify-center">
+        <div className="text-center font-mono">
+          <p className="text-sm">LOADING_SYSTEM_DATA...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-8">
+    <div className="min-h-screen bg-background p-6 md:p-12">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-          Event Sales Analytics
-        </h1>
-        <p className="text-gray-600 dark:text-gray-300 mb-8">
-          24-Month Ticket Sales Dashboard
-        </p>
+        <header className="mb-12 border-b border-default pb-6">
+          <h1 className="text-4xl font-bold mb-2 tracking-tight">
+            Event Sales Analytics
+          </h1>
+          <p className="text-sm font-mono text-gray-600 dark:text-gray-400">
+            SYSTEM_STATUS: ONLINE // 24-MONTH_DASHBOARD
+          </p>
+        </header>
 
         <CSVUploader onDataLoaded={handleDataLoaded} />
 
@@ -103,25 +104,13 @@ export default function Home() {
             <DataTable data={salesData} />
           </>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-12 text-center">
-            <svg
-              className="mx-auto h-16 w-16 text-gray-400 mb-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
-              No Data Loaded
+          <div className="bg-gray-50 dark:bg-gray-950 border border-default p-12 text-center">
+            <div className="font-mono text-sm mb-4">NO_DATA_DETECTED</div>
+            <h3 className="text-xl font-bold mb-2">
+              Awaiting Input
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Upload a CSV file to view sales analytics and visualizations.
+            <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+              Upload a valid CSV file to initialize the analytics engine and generate visualizations.
             </p>
           </div>
         )}

@@ -3,25 +3,54 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FFFFFF;
+  --foreground: #000000;
+  
+  /* Semantic Colors */
+  --bg-secondary: #FAFAFA;
+  --bg-tertiary: #F5F5F5;
+  --border-default: #000000;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #000000;
+    --foreground: #FFFFFF;
+    
+    --bg-secondary: #050505;
+    --bg-tertiary: #171717;
+    --border-default: #FFFFFF;
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-fira-sans), sans-serif; /* Changed to Fira Sans as requested */
+}
+
+/* Headings use sans-serif */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-inter), sans-serif;
+  letter-spacing: -0.02em; /* Tight tracking for headings */
+}
+
+/* Technical elements use mono */
+code, pre, .font-mono {
+  font-family: var(--font-ibm-plex-mono), monospace;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  
+  /* Ardent Border Utilities */
+  .border-hairline {
+    border-width: 1px;
+  }
+  
+  .border-strong {
+    border-width: 2px;
   }
 }

@@ -15,7 +15,7 @@ export default function CSVUploader({ onDataLoaded }: CSVUploaderProps) {
 
   const validateCSV = (data: unknown[]): data is TicketSale[] => {
     if (!Array.isArray(data) || data.length === 0) {
-      setError('CSV file is empty');
+      setError('ERROR: Empty dataset');
       return false;
     }
 
@@ -24,7 +24,7 @@ export default function CSVUploader({ onDataLoaded }: CSVUploaderProps) {
 
     for (const field of requiredFields) {
       if (!(field in firstRow)) {
-        setError(`Missing required field: ${field}`);
+        setError(`ERROR: Missing field [${field}]`);
         return false;
       }
     }
@@ -43,7 +43,7 @@ export default function CSVUploader({ onDataLoaded }: CSVUploaderProps) {
         skipEmptyLines: true,
         complete: (results) => {
           if (results.errors.length > 0) {
-            setError(`Parse error: ${results.errors[0].message}`);
+            setError(`PARSE_ERROR: ${results.errors[0].message}`);
             setIsLoading(false);
             return;
           }
@@ -54,7 +54,7 @@ export default function CSVUploader({ onDataLoaded }: CSVUploaderProps) {
           setIsLoading(false);
         },
         error: (error) => {
-          setError(`Failed to parse CSV: ${error.message}`);
+          setError(`SYSTEM_ERROR: ${error.message}`);
           setIsLoading(false);
         },
       });
@@ -81,7 +81,7 @@ export default function CSVUploader({ onDataLoaded }: CSVUploaderProps) {
       if (file && file.type === 'text/csv') {
         parseCSV(file);
       } else {
-        setError('Please upload a CSV file');
+        setError('INVALID_FILE_TYPE: CSV required');
       }
     },
     [parseCSV]
@@ -107,48 +107,39 @@ export default function CSVUploader({ onDataLoaded }: CSVUploaderProps) {
   }, []);
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 mb-8">
-      <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-        Upload Sales Data
-      </h3>
+    <div className="mb-12 border border-default p-6 bg-secondary">
+      <div className="flex justify-between items-center mb-4 border-b border-default pb-4">
+        <h3 className="font-mono text-sm uppercase">Data_Ingestion</h3>
+        <button
+          onClick={downloadExample}
+          className="font-mono text-xs underline decoration-1 underline-offset-4 hover:bg-gray-200 px-2 py-1"
+        >
+          DOWNLOAD_TEMPLATE.CSV
+        </button>
+      </div>
 
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+        className={`border border-dashed p-12 text-center transition-colors ${
           isDragging
-            ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
-            : 'border-gray-300 dark:border-gray-600'
+            ? 'border-black bg-gray-100 dark:bg-gray-800'
+            : 'border-gray-400 dark:border-gray-600'
         }`}
       >
         {isLoading ? (
-          <div className="py-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600 dark:text-gray-300">Parsing CSV...</p>
+          <div className="py-4 font-mono text-sm">
+            <span className="animate-pulse">PROCESSING_DATA_stream...</span>
           </div>
         ) : (
-          <>
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400"
-              stroke="currentColor"
-              fill="none"
-              viewBox="0 0 48 48"
-              aria-hidden="true"
-            >
-              <path
-                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <p className="mt-4 text-sm text-gray-600 dark:text-gray-300">
-              Drag and drop your CSV file here, or
+          <div className="space-y-4">
+            <p className="font-mono text-sm text-gray-600 dark:text-gray-300">
+              DROP_FILE_HERE_OR
             </p>
-            <label className="mt-2 inline-block">
-              <span className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors cursor-pointer">
-                Browse Files
+            <label className="inline-block">
+              <span className="bg-black text-white dark:bg-white dark:text-black px-6 py-2 text-sm font-medium hover:opacity-90 cursor-pointer border border-transparent transition-all">
+                SELECT_FILE
               </span>
               <input
                 type="file"
@@ -157,27 +148,18 @@ export default function CSVUploader({ onDataLoaded }: CSVUploaderProps) {
                 className="hidden"
               />
             </label>
-            <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-              CSV with columns: event_id, timestamp, price, seat, section
+            <p className="font-mono text-xs text-gray-400">
+              REQ: event_id, timestamp, price, seat, section
             </p>
-          </>
+          </div>
         )}
       </div>
 
       {error && (
-        <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+        <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/10 border-l-2 border-red-600">
+          <p className="font-mono text-xs text-red-600 dark:text-red-400">{error}</p>
         </div>
       )}
-
-      <div className="mt-4 flex justify-center">
-        <button
-          onClick={downloadExample}
-          className="text-sm text-purple-600 dark:text-purple-400 hover:underline"
-        >
-          Download Example CSV
-        </button>
-      </div>
     </div>
   );
 }

@@ -25,61 +25,42 @@ export default function RecommendationsPanel({
     switch (priority) {
       case 'high':
         return {
-          gradient: 'from-red-500 to-rose-600',
-          icon: '🔴',
-          label: 'HIGH PRIORITY',
-          labelColor: 'text-red-100',
+          border: 'border-red-600',
+          bg: 'bg-red-50 dark:bg-red-950',
+          text: 'text-red-600',
+          label: 'PRIORITY_HIGH',
         };
       case 'medium':
         return {
-          gradient: 'from-orange-500 to-amber-600',
-          icon: '🟡',
-          label: 'MEDIUM PRIORITY',
-          labelColor: 'text-orange-100',
+          border: 'border-goldenrod-500',
+          bg: 'bg-yellow-50 dark:bg-yellow-950',
+          text: 'text-goldenrod-500',
+          label: 'PRIORITY_MED',
         };
       case 'low':
         return {
-          gradient: 'from-blue-500 to-cyan-600',
-          icon: '🔵',
-          label: 'LOW PRIORITY',
-          labelColor: 'text-blue-100',
+          border: 'border-ocean-500',
+          bg: 'bg-blue-50 dark:bg-blue-950',
+          text: 'text-ocean-500',
+          label: 'PRIORITY_LOW',
         };
       default:
         return {
-          gradient: 'from-gray-500 to-gray-600',
-          icon: '⚪',
-          label: 'PRIORITY',
-          labelColor: 'text-gray-100',
+          border: 'border-gray-400',
+          bg: 'bg-gray-50 dark:bg-gray-900',
+          text: 'text-gray-500',
+          label: 'PRIORITY_STD',
         };
-    }
-  };
-
-  const getTypeIcon = (type: string) => {
-    switch (type) {
-      case 'price_increase':
-        return '📈';
-      case 'price_decrease':
-        return '📉';
-      case 'urgency':
-        return '⚠️';
-      case 'opportunity':
-        return '💡';
-      case 'marketing':
-        return '📢';
-      default:
-        return '💭';
     }
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 mb-8">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-          🎯 Recommendations ({activeRecommendations.length} Active)
-        </h3>
-      </div>
+    <div className="mb-12">
+      <h3 className="font-mono text-xs uppercase tracking-widest text-gray-500 mb-6 border-b border-default pb-2">
+        System_Advisories // {activeRecommendations.length} ACTIVE
+      </h3>
 
-      <div className="space-y-4">
+      <div className="space-y-0 border-t border-default">
         {activeRecommendations.map((rec) => {
           const styles = getPriorityStyles(rec.priority);
           const isExpanded = expandedId === rec.id;
@@ -87,177 +68,98 @@ export default function RecommendationsPanel({
           return (
             <div
               key={rec.id}
-              className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
+              className="group border-b border-default bg-white dark:bg-black transition-colors hover:bg-gray-50 dark:hover:bg-gray-900"
             >
               <div
-                className={`bg-gradient-to-br ${styles.gradient} p-4 text-white cursor-pointer`}
+                className="flex items-stretch cursor-pointer min-h-[4rem]"
                 onClick={() => setExpandedId(isExpanded ? null : rec.id)}
               >
-                <div className="flex items-start justify-between">
+                {/* Status Strip */}
+                <div className={`w-1 ${styles.bg.replace('bg-', 'bg-').replace('dark:bg-', 'dark:bg-').split(' ')[0] === 'bg-white' ? 'bg-gray-200' : styles.bg.replace('bg-', 'bg-').split(' ')[0].replace('50', '600')} shrink-0`}></div>
+                 {/* Actually let's use the border color for the strip */}
+                 <div className={`w-1 ${styles.text.replace('text-', 'bg-')} shrink-0`}></div>
+
+                <div className="flex-1 p-4 flex flex-col sm:flex-row sm:items-center gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xs font-bold ${styles.labelColor}">
+                    <div className="flex items-center gap-3 mb-1">
+                      <span className={`font-mono text-xs ${styles.text}`}>
                         {styles.label}
                       </span>
                       {rec.targetSection && (
-                        <span className="text-xs bg-white/20 px-2 py-0.5 rounded">
-                          {rec.targetSection}
+                        <span className="font-mono text-xs text-gray-400 border border-gray-200 px-1">
+                          SEC:{rec.targetSection}
                         </span>
                       )}
                     </div>
-
-                    <h4 className="text-lg font-semibold mb-2 flex items-center gap-2">
-                      <span>{getTypeIcon(rec.type)}</span>
-                      <span>{rec.title}</span>
+                    <h4 className="font-semibold text-lg leading-tight">
+                      {rec.title}
                     </h4>
-
-                    <p className="text-sm opacity-90 mb-3">{rec.description}</p>
-
-                    <div className="flex items-center gap-4 text-sm">
-                      <span className="bg-white/20 px-3 py-1 rounded-full">
-                        Confidence: {rec.confidence.toFixed(0)}%
-                      </span>
-                      {rec.estimatedImpact !== 0 && (
-                        <span
-                          className={`px-3 py-1 rounded-full ${
-                            rec.estimatedImpact > 0
-                              ? 'bg-green-500/30'
-                              : 'bg-red-500/30'
-                          }`}
-                        >
-                          Impact: {rec.estimatedImpact > 0 ? '+' : ''}
-                          {formatCurrency(rec.estimatedImpact)}
-                        </span>
-                      )}
-                    </div>
                   </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDismiss(rec.id);
-                    }}
-                    className="ml-4 text-white/80 hover:text-white hover:bg-white/10 rounded-full p-2 transition-colors"
-                    aria-label="Dismiss recommendation"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
+                  <div className="flex items-center gap-4 font-mono text-xs text-gray-500">
+                    <span className="hidden sm:inline">
+                      CONF:{rec.confidence.toFixed(0)}%
+                    </span>
+                    {rec.estimatedImpact !== 0 && (
+                      <span className={rec.estimatedImpact > 0 ? 'text-emerald-600' : 'text-red-600'}>
+                        IMP:{rec.estimatedImpact > 0 ? '+' : ''}{formatCurrency(rec.estimatedImpact)}
+                      </span>
+                    )}
+                    <span className="text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">
+                      {isExpanded ? '[-]' : '[+]'}
+                    </span>
+                  </div>
                 </div>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDismiss(rec.id);
+                  }}
+                  className="px-4 border-l border-transparent group-hover:border-gray-100 dark:group-hover:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-300 hover:text-black dark:hover:text-white transition-all flex items-center justify-center"
+                  aria-label="Dismiss recommendation"
+                >
+                  ×
+                </button>
               </div>
 
               {isExpanded && (
-                <div className="bg-gray-50 dark:bg-gray-700 p-4 border-t border-gray-200 dark:border-gray-600">
-                  <div className="space-y-4">
-                    {Object.keys(rec.metrics).length > 0 && (
-                      <div>
-                        <h5 className="text-sm font-semibold text-gray-800 dark:text-white mb-2">
-                          📊 Metrics
-                        </h5>
-                        <div className="grid grid-cols-2 gap-3 text-sm">
-                          {rec.metrics.currentVelocity !== undefined && (
-                            <div className="bg-white dark:bg-gray-600 p-2 rounded">
-                              <span className="text-gray-600 dark:text-gray-300">
-                                Current Velocity:
-                              </span>
-                              <span className="ml-2 font-medium text-gray-900 dark:text-white">
-                                {formatVelocity(rec.metrics.currentVelocity)}
-                              </span>
-                            </div>
-                          )}
-
-                          {rec.metrics.benchmarkVelocity !== undefined && (
-                            <div className="bg-white dark:bg-gray-600 p-2 rounded">
-                              <span className="text-gray-600 dark:text-gray-300">
-                                Expected:
-                              </span>
-                              <span className="ml-2 font-medium text-gray-900 dark:text-white">
-                                {formatVelocity(rec.metrics.benchmarkVelocity)}
-                              </span>
-                            </div>
-                          )}
-
-                          {rec.metrics.velocityDiff !== undefined && (
-                            <div className="bg-white dark:bg-gray-600 p-2 rounded">
-                              <span className="text-gray-600 dark:text-gray-300">
-                                Velocity Difference:
-                              </span>
-                              <span
-                                className={`ml-2 font-medium ${
-                                  rec.metrics.velocityDiff > 0
-                                    ? 'text-green-600 dark:text-green-400'
-                                    : 'text-red-600 dark:text-red-400'
-                                }`}
-                              >
-                                {rec.metrics.velocityDiff > 0 ? '+' : ''}
-                                {formatPercentage(rec.metrics.velocityDiff, 1)}
-                              </span>
-                            </div>
-                          )}
-
-                          {rec.metrics.daysUntilEvent !== undefined && (
-                            <div className="bg-white dark:bg-gray-600 p-2 rounded">
-                              <span className="text-gray-600 dark:text-gray-300">
-                                Days Until Event:
-                              </span>
-                              <span className="ml-2 font-medium text-gray-900 dark:text-white">
-                                {rec.metrics.daysUntilEvent}
-                              </span>
-                            </div>
-                          )}
-
-                          {rec.metrics.percentSold !== undefined && (
-                            <div className="bg-white dark:bg-gray-600 p-2 rounded">
-                              <span className="text-gray-600 dark:text-gray-300">
-                                Percent Sold:
-                              </span>
-                              <span className="ml-2 font-medium text-gray-900 dark:text-white">
-                                {formatPercentage(rec.metrics.percentSold, 0)}
-                              </span>
-                            </div>
-                          )}
-
-                          {rec.metrics.percentUnsold !== undefined && (
-                            <div className="bg-white dark:bg-gray-600 p-2 rounded">
-                              <span className="text-gray-600 dark:text-gray-300">
-                                Percent Unsold:
-                              </span>
-                              <span className="ml-2 font-medium text-gray-900 dark:text-white">
-                                {formatPercentage(rec.metrics.percentUnsold, 0)}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
+                <div className="pl-5 pr-4 pb-6 pt-2 bg-gray-50 dark:bg-gray-900 border-t border-dashed border-gray-200 dark:border-gray-800">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                      <h5 className="text-sm font-semibold text-gray-800 dark:text-white mb-2">
-                        💭 Reasoning
-                      </h5>
-                      <p className="text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600 p-3 rounded">
+                      <h5 className="font-mono text-xs text-gray-500 mb-3 uppercase">Analysis</h5>
+                      <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed max-w-prose">
                         {rec.reasoning}
                       </p>
+                      
+                      <div className="mt-6">
+                        <h5 className="font-mono text-xs text-gray-500 mb-3 uppercase">Recommended Action</h5>
+                        <div className="p-3 border-l-2 border-ocean-500 bg-white dark:bg-black">
+                          <p className="text-sm font-medium">{rec.action}</p>
+                        </div>
+                      </div>
                     </div>
 
                     <div>
-                      <h5 className="text-sm font-semibold text-gray-800 dark:text-white mb-2">
-                        ✅ Recommended Action
-                      </h5>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white bg-white dark:bg-gray-600 p-3 rounded border-l-4 border-blue-500">
-                        {rec.action}
-                      </p>
+                      <h5 className="font-mono text-xs text-gray-500 mb-3 uppercase">Metrics</h5>
+                      <div className="grid grid-cols-2 gap-px bg-gray-200 dark:bg-gray-700 border border-gray-200 dark:border-gray-700">
+                        {Object.entries(rec.metrics).map(([key, value]) => (
+                          <div key={key} className="bg-white dark:bg-gray-900 p-3">
+                            <span className="block font-mono text-[10px] text-gray-500 uppercase mb-1">
+                              {key.replace(/([A-Z])/g, '_$1')}
+                            </span>
+                            <span className="block font-mono text-sm">
+                              {typeof value === 'number' 
+                                ? key.includes('percent') 
+                                  ? formatPercentage(value, 1) 
+                                  : key.includes('Velocity') 
+                                    ? formatVelocity(value) 
+                                    : value 
+                                : value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -265,12 +167,6 @@ export default function RecommendationsPanel({
             </div>
           );
         })}
-      </div>
-
-      <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-        <p className="text-xs text-blue-800 dark:text-blue-200">
-          💡 <strong>Tip:</strong> Click on any recommendation to view detailed metrics and reasoning. Dismiss recommendations you&apos;ve acted on using the × button.
-        </p>
       </div>
     </div>
   );
