@@ -1,101 +1,131 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import Papa from 'papaparse';
+import CSVUploader from '@/components/CSVUploader';
+import RecommendationsPanel from '@/components/RecommendationsPanel';
+import StatsCards from '@/components/StatsCards';
+import PriceChart from '@/components/PriceChart';
+import SectionChart from '@/components/SectionChart';
+import DataTable from '@/components/DataTable';
+import type { TicketSale, Recommendation } from '@/lib/csvTypes';
+import {
+  calculateStats,
+  groupBySection,
+  generateTimeSeriesData,
+} from '@/lib/analytics';
+import { generateRecommendations } from '@/lib/recommendations';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [salesData, setSalesData] = useState<TicketSale[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    fetch('/example-sales.csv')
+      .then((response) => response.text())
+      .then((csvText) => {
+        Papa.parse(csvText, {
+          header: true,
+          dynamicTyping: true,
+          skipEmptyLines: true,
+          complete: (results) => {
+            setSalesData(results.data as TicketSale[]);
+            setIsLoading(false);
+          },
+        });
+      })
+      .catch((error) => {
+        console.error('Failed to load example CSV:', error);
+        setIsLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (salesData.length > 0) {
+      const recs = generateRecommendations(salesData);
+      setRecommendations(recs);
+    }
+  }, [salesData]);
+
+  const handleDataLoaded = (data: TicketSale[]) => {
+    setSalesData(data);
+  };
+
+  const handleDismissRecommendation = (id: string) => {
+    setRecommendations((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, dismissed: true } : r))
+    );
+  };
+
+  const analytics = salesData.length > 0 ? calculateStats(salesData) : null;
+  const sectionData = salesData.length > 0 ? groupBySection(salesData) : [];
+  const timeSeriesData = salesData.length > 0 ? generateTimeSeriesData(salesData) : [];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-8 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading...</p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+          Event Sales Analytics
+        </h1>
+        <p className="text-gray-600 dark:text-gray-300 mb-8">
+          24-Month Ticket Sales Dashboard
+        </p>
+
+        <CSVUploader onDataLoaded={handleDataLoaded} />
+
+        {salesData.length > 0 && recommendations.length > 0 && (
+          <RecommendationsPanel
+            recommendations={recommendations}
+            onDismiss={handleDismissRecommendation}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        )}
+
+        {salesData.length > 0 ? (
+          <>
+            {analytics && <StatsCards analytics={analytics} />}
+
+            {timeSeriesData.length > 0 && <PriceChart data={timeSeriesData} />}
+
+            {sectionData.length > 0 && <SectionChart data={sectionData} />}
+
+            <DataTable data={salesData} />
+          </>
+        ) : (
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-12 text-center">
+            <svg
+              className="mx-auto h-16 w-16 text-gray-400 mb-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+              No Data Loaded
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300">
+              Upload a CSV file to view sales analytics and visualizations.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
