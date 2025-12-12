@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Fira_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Inter, Source_Code_Pro, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,17 +8,17 @@ const inter = Inter({
   display: "swap",
 });
 
-const firaSans = Fira_Sans({
+const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
-  variable: "--font-fira-sans",
+  variable: "--font-source-serif",
   weight: ["400", "500", "600", "700"], // Regular, Medium, Semi-bold, Bold
   display: "swap",
 });
 
-const ibmPlexMono = IBM_Plex_Mono({
+const sourceCodePro = Source_Code_Pro({
   weight: ["400", "500", "600"],
   subsets: ["latin"],
-  variable: "--font-ibm-plex-mono",
+  variable: "--font-source-code-pro",
   display: "swap",
 });
 
@@ -35,7 +35,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${firaSans.variable} ${ibmPlexMono.variable} antialiased bg-background text-foreground`}
+        className={`${inter.variable} ${sourceSerif.variable} ${sourceCodePro.variable} antialiased bg-background text-foreground`}
       >
         {children}
       </body>

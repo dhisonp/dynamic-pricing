@@ -122,11 +122,10 @@ export default function CSVUploader({ onDataLoaded }: CSVUploaderProps) {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`border border-dashed p-8 text-center transition-colors ${
-          isDragging
+        className={`border border-dashed p-8 text-center transition-colors ${isDragging
             ? 'border-black bg-gray-100 dark:bg-gray-800'
             : 'border-gray-400 dark:border-gray-600'
-        }`}
+          }`}
       >
         {isLoading ? (
           <div className="py-4 font-mono text-sm">
@@ -138,7 +137,7 @@ export default function CSVUploader({ onDataLoaded }: CSVUploaderProps) {
               DROP_FILE_HERE_OR
             </p>
             <label className="inline-block">
-              <span className="bg-black text-white dark:bg-white dark:text-black px-6 py-2 text-sm font-medium hover:opacity-90 cursor-pointer border border-transparent transition-all">
+              <span className="bg-black font-mono text-white dark:bg-white dark:text-black px-6 py-2 text-sm font-medium hover:opacity-90 cursor-pointer border border-transparent transition-all">
                 SELECT_FILE
               </span>
               <input

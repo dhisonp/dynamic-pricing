@@ -74,7 +74,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 md:p-12">
-      <div className="max-w-4xl mx-auto sm:border border-gray-200 dark:border-gray-800 sm:p-6">
+      <div className="max-w-4xl bg-white dark:bg-black mx-auto sm:border border-gray-200 dark:border-gray-800 sm:p-6">
         <header className="mb-12 border-b border-default pb-6">
           <h1 className="text-4xl font-bold mb-2 tracking-tight">
             Event Sales Analytics
