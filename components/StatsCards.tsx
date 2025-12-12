@@ -20,7 +20,7 @@ export default function StatsCards({ analytics }: StatsCardsProps) {
         System_Metrics // Overview
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         <div className="bg-gray-50 dark:bg-gray-900 border border-default p-6">
           <p className="font-mono text-xs text-gray-500 mb-2 uppercase">Total Sales</p>
           <p className="text-3xl font-bold tracking-tight">{analytics.totalSales}</p>
@@ -48,13 +48,13 @@ export default function StatsCards({ analytics }: StatsCardsProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="border border-default p-6 relative">
           <div className="absolute top-0 left-0 w-1 h-full bg-blue-600"></div>
           <p className="font-mono text-xs text-blue-600 mb-4 uppercase tracking-wider">
             Historical Data
           </p>
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <span className="block font-mono text-xs text-gray-500 mb-1">Volume</span>
               <span className="text-2xl font-bold block">
@@ -75,7 +75,7 @@ export default function StatsCards({ analytics }: StatsCardsProps) {
           <p className="font-mono text-xs text-purple-600 mb-4 uppercase tracking-wider">
             Projected Data
           </p>
-          <div className="grid grid-cols-2 gap-8">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <span className="block font-mono text-xs text-gray-500 mb-1">Volume</span>
               <span className="text-2xl font-bold block">

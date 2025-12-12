@@ -122,7 +122,7 @@ export default function CSVUploader({ onDataLoaded }: CSVUploaderProps) {
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`border border-dashed p-12 text-center transition-colors ${
+        className={`border border-dashed p-8 text-center transition-colors ${
           isDragging
             ? 'border-black bg-gray-100 dark:bg-gray-800'
             : 'border-gray-400 dark:border-gray-600'

@@ -28,7 +28,7 @@ export default function SectionChart({ data }: SectionChartProps) {
         Analytics // Section_Performance
       </h3>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div>
           <h4 className="font-mono text-xs text-gray-400 mb-4 uppercase">
             Avg Price by Section

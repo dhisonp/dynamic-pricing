@@ -125,7 +125,7 @@ export default function RecommendationsPanel({
 
               {isExpanded && (
                 <div className="pl-5 pr-4 pb-6 pt-2 bg-gray-50 dark:bg-gray-900 border-t border-dashed border-gray-200 dark:border-gray-800">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <h5 className="font-mono text-xs text-gray-500 mb-3 uppercase">Analysis</h5>
                       <p className="text-sm text-gray-800 dark:text-gray-200 leading-relaxed max-w-prose">
